@@ -1,0 +1,27 @@
+YYTBCAD010 ;Minha primeira rotina em Caché
+ new nome,sobreNome,dataNascimento,endereco,idade
+ set nome="",sobreNome="",dataNascimento="",endereco="",idade=0
+ 
+ write "Cadastro",!
+ 
+ write "Nome:"
+ read nome ;Ler primeiro nome
+ 
+ write !,"Sobre nome:"
+ read sobreNome ;Ler segundo nome (exercício so pede nome e sobrenome mas se a pessoa tiver mas que 1 sobrenome se lascou)
+ 
+ write !,"Data nascimento:"
+ read dataNascimento ;Não há validação para o input caso coloque outra coisa ele gera erro
+ 
+ write !,"Endereço:"
+ read endereco
+ 
+ set pegarIdade = (+$horolog-$zdateh(dataNascimento,4,,4))/365
+ 
+ write !
+ 
+ write !,"Nome completo: ",nome_" "_sobreNome
+ write !,"Idade:",$extract(pegarIdade,1,2)
+ write !,"Endereço:",endereco
+ 
+ quit
