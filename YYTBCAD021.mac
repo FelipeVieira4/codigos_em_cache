@@ -1,0 +1,13 @@
+YYTBCAD021
+ 
+ for valor=0:1:100{
+  write valor 
+
+  write $select(valor#2=0:" - Impar",1:" - Par"),!
+  
+  ;if valor#2=0 {write " - Impar"}
+  ;else {write " - Par"} 
+  ;write !
+ }
+
+ quit
