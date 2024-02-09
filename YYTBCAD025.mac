@@ -1,0 +1,52 @@
+YYTBCAD025
+ set mensagem = ("")
+ 
+ do EditarTexto("meu noMe é felipe",7,mensagem)
+ 
+ quit
+ 
+EditarTexto(string,opcao,stringEdt)
+	if '$data(string) || '$data(opcao){
+	 write "ERRO: falta de parametro",!
+	 quit
+	}
+	
+	;Será que existe switch/match em Caché?? ou um HashMap de keys(int) para "funções"
+	if opcao = 1{
+	 set stringEdt = $zconvert(string,"U")
+	 write stringEdt,!
+	}
+	elseif opcao = 2{
+	 set stringEdt = $zconvert(string,"L")
+	 write stringEdt,!
+	}
+	elseif opcao = 3{
+	 for index = $length(string):-1:1{
+	  write $extract(string,index,index)
+	 }
+	 write !
+	}
+	elseif opcao = 4{
+	 set stringEdt = $zconvert(string,"W")
+	 write stringEdt,!
+	}
+	elseif opcao = 5{
+	 write $extract(string,0,15),!
+	}
+	elseif opcao = 6{
+	 write $length(string),!
+	}
+	elseif opcao = 7{
+	 ; $Length - 1 por que por padrão ja vem valor 1
+	 ; só conta vogais em minúsculo
+	 write "QTDA A:",$length(string,"a")-1,!
+	 write "QTDA E:",$length(string,"e")-1,!
+	 write "QTDA I:",$length(string,"i")-1,!
+	 write "QTDA O:",$length(string,"o")-1,!
+	 write "QTDA U:",$length(string,"u")-1,!
+	}
+	else{
+	 write "ERRO: opção invalída",!
+	}
+	 
+	quit
