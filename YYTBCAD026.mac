@@ -1,0 +1,81 @@
+YYTBCAD026
+ set variavel="parte 1^parte 2^parte 3^parte 4" 
+
+ write variavel,!
+
+ ; Adicionar mais 4 partes
+ for i = 5:1:10{
+  set $piece(variavel,"^",i)="parte "_i
+ }
+
+ write variavel,!
+
+ ; Escrever "parte 4" ao contrario
+ do EditarTexto^YYTBCAD025($piece(variavel,"^",4),3) ; Executar regra de outra rotina
+ 
+ kill variavel ; Limpar da mémoria( = free() de ponteiros em C)
+ kill varPedaco
+ 
+ goto 200
+ 
+100
+
+ set valor=33000
+ write $fnumber(valor,".",2),!
+ write $fnumber(valor,",",2),!
+ 
+ kill valor
+ 
+ goto 300
+
+200
+ 
+ write !,"globais",!
+ 
+ set ^Global(1,2,3) = "12^8^7"
+ set ^Global(4) = "9^8^7"
+ set ^Global(5) = "7^3^4"
+
+ zwrite ^Global
+
+ set varGet = $get(^Global(4))
+ write varGet,!
+ 
+ kill varGet
+ 
+ set resultado = 0
+ 
+ ; ".resultado"  o ponto do antes serve para atribuir valor a variável
+ set sc = $$RetorneSoma($piece(^Global(4),"^",2),4,.resultado) ; 8 + 4 = 12
+ write "Resultado da soma: ",resultado,!
+ write "status code:",sc,!
+ 
+ goto 100
+ 
+300
+
+ write $translate("Texto com varios espacos !!!"," ","|"),!
+ write $translate($zdate($horolog,4),"0","@"),!
+ 
+ write $translate("Preto^Azul^Amarelo^Vermelho^Branco^Verde","Verde","Caché"),!
+ write $replace("Preto^Azul^Amarelo^Vermelho^Branco^Verde","Verde","Caché"),!
+ 
+ set varX = 2
+ set varX = varX + 2 ;varX+=2
+ write varX,!
+ 
+ do EscreverHWString()
+
+ kill varX
+ 
+ quit
+
+ ; Regras da rotina
+EscreverHWString(string)
+	write "HELLO WORLD!",!
+	write:$Data(string) string,!
+	quit
+RetorneSoma(valor1,valor2,valorResultado)
+	if '$data(valor1) || '$data(valor2) quit 0 ;Confirir se não são nulos
+	set valorResultado = (valor1+valor2)
+	quit 1
