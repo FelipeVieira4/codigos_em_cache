@@ -1,6 +1,11 @@
 YYCFVCAD610
 
 ConsultaDeFuncionariosPorSetor(codSetor)
+	if '$data(codSetor){
+	 write "o codigo esta em branco",!
+	 quit 1
+	}
+
 	set setorValido = $piece( $get(^globalSetor(codSetor)),"^",1)
 	if (codSetor?.N '= 1) || (setorValido = ""){
 	 write "Valor do setor invalido",!
