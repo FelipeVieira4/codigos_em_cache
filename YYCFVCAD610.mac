@@ -1,0 +1,30 @@
+YYCFVCAD610
+
+ConsultaDeFuncionariosPorSetor(codSetor)
+	set setorValido = $piece( $get(^globalSetor(codSetor)),"^",1)
+	if (codSetor?.N '= 1) || (setorValido = ""){
+	 write "Valor do setor invalido",!
+	 quit 1
+	}
+	
+	set codFuncionario = "0"
+	set existeFuncionarioNoSetor = 0
+	while codFuncionario'=""{
+	 ;Puxar proxima codigo de funcionario da global
+	 set codFuncionario =$order(^globalFuncionario(codFuncionario))
+	 
+	 ;Procurar pelo código do setor em que o usuario está cadastrado
+	 set codSetorFunc = $piece($get(^globalFuncionario(codFuncionario)),"^",3)
+	 
+	 set codSetorFunc = $piece($get(^globalSetor(codSetorFunc)),"^",1)
+	 if codSetorFunc = codSetor{
+	  set existeFuncionarioNoSetor = 1
+	  write "Funcionario:"_codFuncionario_" esta no Setor:"_codSetor,!
+	 }
+	}
+	
+	if 'existeFuncionarioNoSetor{
+	 write "Sem funcionario foi encontrado nesse setor",!
+	}
+	
+	quit 1

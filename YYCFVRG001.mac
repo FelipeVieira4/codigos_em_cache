@@ -1,0 +1,113 @@
+YYCFV01
+CalcularAreaRetangulo(valBase, valAltuta, valorRetorno)
+	set valorRetorno = valBase*valAltuta
+	write "Valor do retorno:",valorRetorno,!
+	
+	quit valorRetorno
+	
+CalcularIdadePessoa(dataNascimento)
+	set idade = $piece($zdateh(dataNascimento,4,),",",1)
+	write ($piece($horolog,",",1)-idade) /365,!
+	write $piece($horolog,",",1)-idade,!
+	quit 1
+
+CalcularEleicao(totalEleitores,totalBrancos,totalNulos,totalValidos)
+	write "Porcentagem de votos Brancos ",((totalBrancos*100)/totalEleitores), " %",!
+	write "Porcentagem de votos Nulos ",((totalNulos*100)/totalEleitores)," %",!
+	write "Porcentagem de votos Validos: ",((totalValidos*100)/totalEleitores), " %",!
+	quit 1
+	
+CalcularSalarioExtra(totalHoras,valorHora)
+	set salario = 0
+	if totalHoras > 40{
+	 set salario = 40 * valorHora
+	 set salarioExtra = (totalHoras-40) * (valorHora+(valorHora/2))
+	 set salario = salario+salarioExtra
+	 
+	 write "Salario extra: ", salarioExtra,!
+	 write "Salario total: ", salario,!
+	 
+	 quit 1
+	}
+	set salario = totalHoras * valorHora
+	write "Nao deu sario extra: ",!
+	write "Salario total: ", salario,!
+	
+	quit 1
+	
+CalcularSalarioVendas(salarioFixo,TotalVendido)
+	new diferenca
+	if TotalVendido-salarioFixo <= 1500{	;Salario não passou de 1500 então não vai ter comissão de 5%
+	 set diferenca = TotalVendido-salarioFixo*(3/100)
+	 write "Valor diferenca:"_diferenca,!
+	 quit 1
+	}
+	set diferenca = TotalVendido-salarioFixo*(3+5/100)
+	write "Valor diferenca:"_diferenca,!
+	quit 1
+	
+CompraDeUmProduto(nome,precoUnitario,qtda)
+	set total = qtda*precoUnitario
+	set totalPagar = 0
+	set desconto = 0
+	
+	if qtda <= 5{
+	 set desconto = (2*total)/100
+	}
+	if qtda > 5{
+	 set desconto = (3*total)/100
+	}
+	if qtda >10{
+	 set desconto = (total*100)/5
+	}
+	set totalPagar = total - desconto
+	
+	write "total:"_total,!
+	write "desconto:"_desconto,!
+	write "preco total:"_totalPagar,!
+	quit 1
+	
+CalcularAponsentadoria(codigo,dataNasc,dataIniEmpresa)
+	set dataIniEmpresa = $piece($zdateh(dataIniEmpresa,4,),",",1)
+	set anoNascimento = $piece($zdateh(dataNasc,4,),",",1)
+	
+	set idade = ($piece($HOROLOG,",",1) - anoNascimento)/365
+	set tempoDeEmpresa = ($piece($HOROLOG,",",1) - dataIniEmpresa)/365
+
+	if (idade > 60) && (tempoDeEmpresa > 20){
+	 write "Tem mais de 60 anos e mais de 20 na empresa",!
+	 write "Funcionario:"_codigo,!
+	 write "pode ter o acesso a aposentadoria.",!
+	 quit
+	}
+	write "Funcionario:"_codigo,!
+	write "Nao pode ter o acesso a aposentadoria ainda.",!
+	quit 1
+	
+CalcularSomaNumString(valor)
+	set valorResult = 0
+	set maiorValor = 0
+	
+	for i = 0:1:10{
+	 set valorPego = $piece(valor,",",i)
+	 set valorResult = valorResult + valorPego
+	 
+	 if maiorValor < valorPego{
+	  set maiorValor = valorPego
+	 }
+	 
+	}
+	
+	write "Valor da soma:",valorResult,!
+	write "Maior valor:",maiorValor,!
+	write "Media dos valores:",valorResult/10,!
+	quit 1
+
+ConsultaNumerosPor10()
+	for i = 0:1:100{
+	 if i#10 = 0{
+	  write i," e um numero disivel por 10",!
+	 }
+	}
+	quit 1
+	

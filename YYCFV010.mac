@@ -1,0 +1,138 @@
+YYCFVCAD010
+	    ;Codigo / Descrição / Situação 
+ set ^globalArea(1) = "1^descricao^0"
+ 
+ 	    ;Codigo / Descrição / Area / Situação 
+ set ^globalSetor(1) = "1^descricao^1^0"
+ 
+ 	    ;Codigo / Descrição / Setor / Situação
+ set ^globalFuncionario(1) = "1^descricao^1^0"
+ 
+ zwrite ^globalArea
+ zwrite ^globalSetor
+ 
+CadastroDeArea(codigo, descricao, situacao)
+	if (codigo?.N '= 1) || (codigo > 99){
+	 write "Valor do codigo invalido",!
+	 quit 1
+	}
+	if situacao?.N '= 1 || (situacao > 1){
+	 write "Valor da situacao invalida",!
+	 quit 1	
+	}
+	
+	; caso esteja em branco colocar nula
+	if '$data(descricao){
+	 set descricao = ""	
+	}
+
+	set valorGlobal = $get(^globalArea(codigo))
+	set valorCodigo = $piece(valorGlobal,"^",1)
+	
+	write valorGlobal,!
+	
+	if valorCodigo '= "" {
+	 write "Esse codigo existe",!
+	 
+	 set apagar = 0
+	 read "Apagar Area?(S/n):",apagar
+	 if (apagar  = "S") || (apagar  = "s"){
+	  kill ^globalArea(valorCodigo)
+	  write !,"Valor apagado",!	 
+	 }
+	 zwrite ^globalArea
+	 quit 1
+	}
+	write "nao tem valor",!
+	set ^globalArea(codigo) = codigo_"^"_descricao_"^"_situacao
+	
+	zwrite ^globalArea
+	quit 1
+	
+CadastroDeSetor(codigo, descricao, area, situacao)
+	if (codigo?.N '= 1) || (codigo > 99){
+	 write "Valor do codigo invalido",!
+	 quit 1
+	}
+	
+	set areaValida = $piece( $get(^globalArea(area)),"^",1)
+	if (area?.N '= 1) || (areaValida = ""){
+	 write "Valor da area invalido",!
+	 quit 1
+	}
+	if situacao?.N '= 1 || (situacao > 1){
+	 write "Valor da situacao invalida",!
+	 quit 1	
+	}
+	
+	; caso esteja em branco colocar nula
+	if '$data(descricao){
+	 set descricao = ""	
+	}
+	
+	set valorCodigo = $piece($get(^globalSetor(codigo)),"^",1)	
+	if valorCodigo '= "" {
+	 write "Esse codigo existe",!
+	 
+	 set apagar = 0
+	 read "Apagar Area?(S/n):",apagar
+	 if (apagar  = "S") || (apagar  = "s"){
+	  kill ^globalSetor(valorCodigo)
+	  write !,"Valor apagado",!	 
+	 }
+	 zwrite ^globalSetor
+	 quit 1
+	}
+	
+	set ^globalSetor(codigo) = codigo_"^"_descricao_"^"_area_"^"_situacao
+	zwrite ^globalSetor
+	quit 1
+
+CadastroDeFuncionario(codigo, descricao, setor, situacao)
+	if (codigo?.N '= 1) || (codigo > 99){
+	 write "Valor do codigo invalido",!
+	 quit 1
+	}
+	
+	set setorValido = $piece( $get(^globalSetor(setor)),"^",1)
+	if (setor?.N '= 1) || (setorValido = ""){
+	 write "Valor do setor invalido",!
+	 quit 1
+	}
+	if situacao?.N '= 1 || (situacao > 1){
+	 write "Valor da situacao invalida",!
+	 quit 1	
+	}
+	
+	; caso esteja em branco colocar nula
+	if '$data(descricao){
+	 set descricao = ""	
+	}
+	
+	set valorCodigo = $piece($get(^globalFuncionario(codigo)),"^",1)	
+	if valorCodigo '= "" {
+	 write "Esse codigo existe",!
+	 
+	 set apagar = 0
+	 read "Apagar Area?(S/n):",apagar
+	 if (apagar  = "S") || (apagar  = "s"){
+	  kill ^globalFuncionario(valorCodigo)
+	  write !,"Valor apagado",!	 
+	 }
+	 zwrite ^globalFuncionario
+	 quit 1
+	}
+	
+	set ^globalFuncionario(codigo) = codigo_"^"_descricao_"^"_setor_"^"_situacao
+	zwrite ^globalFuncionario
+	quit 1
+
+ ;Código para mostrar informaçãos do Setor e sua Area 
+MostrarSetorArea(codSetor)
+	set setor = $get(^globalSetor(codSetor))
+	write "Codigo Setor:"_$piece(setor,"^",1),!
+	write "Descricao Setor:"_$piece(setor,"^",2),!
+	write "Codigo Area:"_$piece(setor,"^",3),!
+	set codArea = $piece(setor,"^",3)
+	write " - Descricao Area:"_$piece($get(^globalArea($piece(setor,"^",3))),"^",2),!
+	write "Situacao setor(0 - inativa e 1 - ativa) :"_$piece(setor,"^",4)
