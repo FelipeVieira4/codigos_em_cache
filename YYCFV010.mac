@@ -12,6 +12,12 @@ YYCFVCAD010
  zwrite ^globalSetor
  
 CadastroDeArea(codigo, descricao, situacao)
+
+	if '$data(codigo) || '$data(situacao){
+	 write "valores nulo",!
+	 quit 1
+	}
+
 	if (codigo?.N '= 1) || (codigo > 99){
 	 write "Valor do codigo invalido",!
 	 quit 1
@@ -50,6 +56,12 @@ CadastroDeArea(codigo, descricao, situacao)
 	quit 1
 	
 CadastroDeSetor(codigo, descricao, area, situacao)
+	
+	if '$data(codigo) || '$data(area) || '$data(situacao){
+	 write "valores nulo",!
+	 quit 1
+	}
+
 	if (codigo?.N '= 1) || (codigo > 99){
 	 write "Valor do codigo invalido",!
 	 quit 1
@@ -89,6 +101,12 @@ CadastroDeSetor(codigo, descricao, area, situacao)
 	quit 1
 
 CadastroDeFuncionario(codigo, descricao, setor, situacao)
+
+	if '$data(codigo) || '$data(setor) || '$data(situacao){
+	 write "valores nulo",!
+	 quit 1
+	}
+	
 	if (codigo?.N '= 1) || (codigo > 99){
 	 write "Valor do codigo invalido",!
 	 quit 1
