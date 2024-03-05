@@ -1,0 +1,42 @@
+YYTBCAD030
+
+ kill tabela
+ 
+ set tabela(7)="ABCD" 
+ set tabela(5)="BACD" 
+ set tabela(91)="CBAD" 
+ set tabela(9)="DBCA" 
+ 
+ set primeiroId=$order(tabela(""),1)
+ 
+ set valor = "" 
+ 	;        posicao   ,prox/anter, valor
+ set ultimoId=$order(tabela("7"),1,valor)
+
+ 
+ write primeiroId,!
+ write ultimoId,!
+ write valor,!
+ 
+ set id = $order(tabela(""),1,valor)
+ 
+ WHILE (id'="") {
+  WRITE id,"	:",valor,!
+  
+  SET id = $ORDER(tabela(id),1,valor)
+ }
+ 
+ ; ou de trás pra frente
+ set id = $order(tabela(""),-1,valor)
+ 
+ WHILE (id'="") {
+  WRITE id,"	:",valor,!
+  
+  SET id = $ORDER(tabela(id),-1,valor)
+ }
+ 
+ set texto = "Olá, Mundo!"
+ set sc = $$EditarTexto^YYTBCAD025(texto,2,.texto)
+ write $extract(texto,6,10),!
+ write "Retorno"_" da"_" regra: ",sc,!
+ 
