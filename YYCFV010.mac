@@ -1,4 +1,5 @@
 YYCFVCAD010
+
 	    ;Codigo / Descrição / Situação 
  set ^globalArea(1) = "1^descricao^0"
  
@@ -11,38 +12,38 @@ YYCFVCAD010
  zwrite ^globalArea
  zwrite ^globalSetor
  
-CadastroDeArea(codigo, descricao, situacao)
+CadastroDeArea(codArea, desArea, sitArea)
 
-	; Parte de validações
-	if '$data(codigo) || '$data(situacao){
-	 write "valores nulo",!
+	;Parte de validações
+	if '$data(codArea) || '$data(sitArea){
+	 write "Parametro nulo nao e aceito",!
 	 quit 1
 	}
 
-	if (codigo?.N '= 1) || (codigo > 99){
+	if (codArea?.N '= 1) || (codArea > 99){ ;Código só pode conter  digitos então de 0 até 99
 	 write "Valor do codigo invalido",!
 	 quit 1
 	}
-	if situacao?.N '= 1 || (situacao > 1){
+	if sitArea?.N '= 1 || (sitArea > 1){
 	 write "Valor da situacao invalida",!
 	 quit 1	
 	}
 	
-	; caso parâmetro esteja em branco colocar um valor nula
-	if '$data(descricao){
-	 set descricao = ""	
+	;Caso parâmetro esteja em branco colocar um valor nula
+	if '$data(desArea){
+	 set desArea = ""	
 	}
 
 	
-	set valorGlobal = $get(^globalArea(codigo))
+	set valorGlobal = $get(^globalArea(codArea))
 	set valorCodigo = $piece(valorGlobal,"^",1)
 	
 	;Caso tenha uma área já regista nessa chave perguntar para remover a mesma 
 	if valorCodigo '= "" {
 	 write "Esse codigo existe",!
 	 
-	 ;Retor no "S" remove as informações da empresa da ^globalArea
-	 set apagar = 0
+	 ;Caso retorno seja "S" remove as informações da empresa da ^globalArea
+	 set apagar = ""
 	 read "Apagar Area?(S/n):",apagar
 	 if $zconvert(apagar,"U") = "S"{
 	  kill ^globalArea(valorCodigo)
@@ -52,44 +53,44 @@ CadastroDeArea(codigo, descricao, situacao)
 	 quit 1 ;Sair da rotina
 	}
 	
-	; Tendo esse código valído copiar os parametros para ^globaArea
+	;Tendo esse código valído copiar os parametros para ^globaArea
 	write "nao tem valor",!
-	set ^globalArea(codigo) = codigo_"^"_descricao_"^"_situacao
+	set ^globalArea(codArea) = codArea_"^"_desArea_"^"_sitArea
 	
 	zwrite ^globalArea
 	quit 1
 	
-CadastroDeSetor(codigo, descricao, area, situacao)
+CadastroDeSetor(codSetor, desSetor, codArea, sitSetor)
 	
-	; Validações de parâmetros
-	if '$data(codigo) || '$data(area) || '$data(situacao){
+	;Validações de parâmetros
+	if '$data(codSetor) || '$data(codArea) || '$data(sitSetor){
 	 write "valores nulo",!
 	 quit 1
 	}
 
-	if (codigo?.N '= 1) || (codigo > 99){
+	if (codSetor?.N '= 1) || (codSetor > 99){
 	 write "Valor do codigo invalido",!
 	 quit 1
 	}
 	
 	; Validar se o código da da ^globalArea é valida
-	set areaValida = $piece( $get(^globalArea(area)),"^",1)
-	if (area?.N '= 1) || (areaValida = ""){
+	set areaValida = $piece( $get(^globalArea(codArea)),"^",1)
+	if (codArea?.N '= 1) || (areaValida = ""){
 	 write "Valor da area invalido",!
 	 quit 1
 	}
-	if situacao?.N '= 1 || (situacao > 1){
+	if sitSetor?.N '= 1 || (sitSetor > 1){
 	 write "Valor da situacao invalida",!
 	 quit 1	
 	}
 	
 	; caso parâmetro esteja em branco colocar um valor nula
-	if '$data(descricao){
-	 set descricao = ""	
+	if '$data(desSetor){
+	 set desSetor = ""	
 	}
 	
 	;Caso tenha um Setor já regista nessa chave perguntar para remover a mesma
-	set valorCodigo = $piece($get(^globalSetor(codigo)),"^",1)	
+	set valorCodigo = $piece($get(^globalSetor(codSetor)),"^",1)	
 	if valorCodigo '= "" {
 	 write "Esse codigo existe",!
 	 
@@ -103,38 +104,38 @@ CadastroDeSetor(codigo, descricao, area, situacao)
 	 quit 1
 	}
 	
-	set ^globalSetor(codigo) = codigo_"^"_descricao_"^"_area_"^"_situacao
+	set ^globalSetor(codSetor) = codSetor_"^"_desSetor_"^"_codArea_"^"_sitSetor
 	zwrite ^globalSetor
 	quit 1
 
-CadastroDeFuncionario(codigo, descricao, setor, situacao)
+CadastroDeFuncionario(codFunc, desFunc, codSetor, sitFunc)
 
-	if '$data(codigo) || '$data(setor) || '$data(situacao){
+	if '$data(codFunc) || '$data(codSetor) || '$data(sitFunc){
 	 write "valores nulo",!
 	 quit 1
 	}
 	
-	if (codigo?.N '= 1) || (codigo > 99){
+	if (codFunc?.N '= 1) || (codFunc > 99){
 	 write "Valor do codigo invalido",!
 	 quit 1
 	}
 	
-	set setorValido = $piece( $get(^globalSetor(setor)),"^",1)
-	if (setor?.N '= 1) || (setorValido = ""){
+	set setorValido = $piece( $get(^globalSetor(codSetor)),"^",1)
+	if (codSetor?.N '= 1) || (setorValido = ""){
 	 write "Valor do setor invalido",!
 	 quit 1
 	}
-	if situacao?.N '= 1 || (situacao > 1){
+	if sitFunc?.N '= 1 || (sitFunc > 1){
 	 write "Valor da situacao invalida",!
 	 quit 1	
 	}
 	
 	; caso parâmetro esteja em branco colocar um valor nula
-	if '$data(descricao){
-	 set descricao = ""	
+	if '$data(desFunc){
+	 set desFunc = ""	
 	}
 	
-	set valorCodigo = $piece($get(^globalFuncionario(codigo)),"^",1)	
+	set valorCodigo = $piece($get(^globalFuncionario(codFunc)),"^",1)	
 	if valorCodigo '= "" {
 	 write "Esse codigo existe",!
 	 
@@ -149,7 +150,7 @@ CadastroDeFuncionario(codigo, descricao, setor, situacao)
 	 quit 1
 	}
 	
-	set ^globalFuncionario(codigo) = codigo_"^"_descricao_"^"_setor_"^"_situacao
+	set ^globalFuncionario(codFunc) = codFunc_"^"_desFunc_"^"_codSetor_"^"_sitFunc
 	zwrite ^globalFuncionario
 	quit 1
 

@@ -1,4 +1,9 @@
+
+#define porSimples 3
+#define porAdicional 5
+
 YYCFV01
+ 
 CalcularAreaRetangulo(valBase, valAltuta, valorRetorno)
 	set valorRetorno = valBase*valAltuta
 	write "Valor do retorno:",valorRetorno,!
@@ -6,9 +11,12 @@ CalcularAreaRetangulo(valBase, valAltuta, valorRetorno)
 	quit valorRetorno
 	
 CalcularIdadePessoa(dataNascimento)
-	set idade = $piece($zdateh(dataNascimento,4,),",",1)
-	write ($piece($horolog,",",1)-idade) /365,!
-	write $piece($horolog,",",1)-idade,!
+	set anoNascimento = $piece($zdateh(dataNascimento,4,),",",1)
+	
+	set idade = ($piece($horolog,",",1)-anoNascimento) /365
+	write $fnumber(idade,",",0),!
+	
+	write $piece($horolog,",",1)-anoNascimento,!
 	quit 1
 
 CalcularEleicao(totalEleitores,totalBrancos,totalNulos,totalValidos)
