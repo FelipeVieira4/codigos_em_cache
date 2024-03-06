@@ -1,0 +1,86 @@
+YYCFVCAD010
+
+ ;global é composta por Codigo^Descrição^Setor^Situação
+ set ^globalFuncionario(0) = "0^descricao^0^0"
+ do TelaCadastroDeFunc^YYCFVCAD010
+
+CadastroDeFuncionario(codFunc, desFunc, codSetor, sitFunc)
+
+	if '$data(codFunc) || '$data(codSetor) || '$data(sitFunc){
+	 write "valores nulo",!
+	 quit 1
+	}
+	
+	if (codFunc?.N '= 1) || (codFunc > 99){
+	 write "Valor do codigo invalido",!
+	 quit 1
+	}
+	
+	set setorValido = $piece( $get(^globalSetor(codSetor)),"^",1)
+	if (codSetor?.N '= 1) || (setorValido = ""){
+	 write "Valor do setor invalido",!
+	 quit 1
+	}
+	if sitFunc?.N '= 1 || (sitFunc > 1){
+	 write "Valor da situacao invalida",!
+	 quit 1	
+	}
+	
+	; caso parâmetro esteja em branco colocar um valor nula
+	if '$data(desFunc){
+	 set desFunc = ""	
+	}
+	
+	set valorCodigo = $piece($get(^globalFuncionario(codFunc)),"^",1)	
+	if valorCodigo '= "" {
+	 write "Esse codigo existe",!
+	 
+	 ; Caso tenha um empresa já regista nessa chave perguntar para remover a mesma 
+	 set apagar = 0
+	 read "Apagar Area?(S/n):",apagar
+	 if $zconvert(apagar,"U") = "S"{
+	  kill ^globalFuncionario(valorCodigo)
+	  write !,"Valor apagado",!	 
+	 }
+	 zwrite ^globalFuncionario
+	 quit 1
+	}
+	
+	set ^globalFuncionario(codFunc) = codFunc_"^"_desFunc_"^"_codSetor_"^"_sitFunc
+	;zwrite ^globalFuncionario
+	quit 1
+	
+TelaCadastroDeFunc
+
+CONTINUAR
+	write #
+	write "====Cadastro de FUNCIONARIO====",!
+	
+	new cod,des,codSetor,sit
+	set (cod,des,codSetor,sit) = ""
+	
+	read "Codigo do Funcionario:",cod,!
+	read "Descricao do Funcionario:",des,!
+	read "Codigo do setor:",codSetor,! 
+	read "Situacao do Funcionario:",sit,! 
+	
+	; Chamar a regra de Cadastro do funcionario
+	do CadastroDeFuncionario^YYCFVCAD010(cod,des,codSetor,sit)
+	
+	write "========================",!
+	set continuar = ""
+	read "Continuar?(S):",continuar
+	if $zconvert(continuar ,"U") = "S" goto CONTINUAR
+
+	quit 1
+	
+
+ ; Rotina para mostrar informaçãos do Setor e sua Area 
+MostrarSetorArea(codSetor)
+	set setor = $get(^globalSetor(codSetor))
+	write "Codigo Setor:"_$piece(setor,"^",1),!
+	write "Descricao Setor:"_$piece(setor,"^",2),!
+	write "Codigo Area:"_$piece(setor,"^",3),!
+	set codArea = $piece(setor,"^",3)
+	write " - Descricao Area:"_$piece($get(^globalArea($piece(setor,"^",3))),"^",2),!
+	write "Situacao setor(0 - inativa e 1 - ativa) :"_$piece(setor,"^",4)
