@@ -14,19 +14,19 @@ ConsultaDeFuncionariosPorSetor(codSetor)
 	
 	set codFuncionario = "0"
 	set existeFuncionarioNoSetor = 0
-	while codFuncionario'=""{
-	 ;Puxar proxima codigo de funcionario da global
-	 set codFuncionario =$order(^globalFuncionario(codFuncionario))
-	 
-	 ;Procurar pelo código do setor em que o usuario está cadastrado
-	 set codSetorFunc = $piece($get(^globalFuncionario(codFuncionario)),"^",3)
-	 
-	 set codSetorFunc = $piece($get(^globalSetor(codSetorFunc)),"^",1)
-	 if codSetorFunc = codSetor{
-	  set existeFuncionarioNoSetor = 1
-	  write "Funcionario:"_codFuncionario_" esta no Setor:"_codSetor,!
-	 }
-	}
+	
+  	FOR  set codFuncionario =$order(^globalFuncionario(codFuncionario)) QUIT:codFuncionario=""  do
+	.; Execução dendo do loop for
+	.;Procurar pelo código do setor em que o usuario está cadastrado
+	.set codSetorFunc = $piece($get(^globalFuncionario(codFuncionario)),"^",3)
+	.set codSetorFunc = $piece($get(^globalSetor(codSetorFunc)),"^",1)
+	.if codSetorFunc = codSetor{
+	.set existeFuncionarioNoSetor = 1
+	.write "Funcionario:"_codFuncionario_" esta no Setor:"_codSetor,!
+	.}
+        	.set codFuncionario =$order(^globalFuncionario(codFuncionario)) 
+      	
+
 	
 	if 'existeFuncionarioNoSetor{
 	 write "Sem funcionario foi encontrado nesse setor",!
