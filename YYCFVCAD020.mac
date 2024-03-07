@@ -5,23 +5,23 @@ YYCFVCAD020
 CadastroDeSetor(codSetor, desSetor, codArea, sitSetor)
 	
 	; Validações de parâmetros
-	if '$data(codSetor) || '$data(codArea) || '$data(sitSetor){
+	if ('$data(codSetor)) ! ('$data(codArea)) ! ('$data(sitSetor)){
 	 write "valores nulo",!
 	 quit 1
 	}
 
-	if (codSetor?.N '= 1) || (codSetor > 99){
+	if (codSetor?.N '= 1) ! (codSetor > 99) ! (codSetor < 0){
 	 write "Valor do codigo invalido",!
 	 quit 1
 	}
 	
 	; Validar se o código da da ^globalArea é valida
 	set areaValida = $piece( $get(^globalArea(codArea)),"^",1)
-	if (codArea?.N '= 1) || (areaValida = ""){
+	if (codArea?.N '= 1) ! (areaValida = ""){
 	 write "Valor da area invalido",!
 	 quit 1
 	}
-	if sitSetor?.N '= 1 || (sitSetor > 1){
+	if (sitSetor?.N '= 1) ! (sitSetor > 1){
 	 write "Valor da situacao invalida",!
 	 quit 1	
 	}
@@ -64,7 +64,7 @@ CONTINUAR
 	read "Codigo do Setor:",cod,!
 	read "Descricao do Setor:",des,!
 	read "Codigo da Area:",codArea,! 
-	read "Situacao da Area:",sit,!
+	read "Situacao do Setor:",sit,!
 	
 	if (cod="") ! (sit="") ! (codArea=""){
 	 write !,"Valores nulos sao invalidos",!

@@ -9,7 +9,7 @@ CadastroDeArea(codArea, desArea, sitArea)
 
 	; Parte de validações (não sei por que mais o valor "" é considerado como valido)
 	if ('$data(codArea)) ! ('$data(sitArea)){
-	 write "Parametro em branco são invalidos",!
+	 write "Parametro em branco sao invalidos",!
 	 quit 1
 	}
 
@@ -45,7 +45,6 @@ CadastroDeArea(codArea, desArea, sitArea)
 	  write !,"Valor apagado",!	 
 	 }
 	 
-	 zwrite ^globalArea
 	 quit 1 ;Sair da rotina
 	}
 	
@@ -85,3 +84,32 @@ PASSARCADASTRO
 	if $zconvert(continuar ,"U") = "S" goto CONTINUAR
 
 	quit 1
+
+MostrarAreas
+
+0000
+	new codArea
+
+0500
+	set codArea = "0"
+
+2000	
+	; Tentativa tosca de fazer um GRID pelo prompt
+	write #,!
+	write "= COD|	","=== DESCRICAO(33)===	"," 	|SIT",!
+	
+	for {set codArea =$order(^globalArea(codArea)) QUIT:codArea=""
+	  set descricao = $piece($get(^globalArea(codArea)),"^",2)
+	  
+	  write "  ",codArea,"  |"
+	  
+	  write $extract(descricao,0,34)
+      	  for i = $length(descricao) : 1 : 33{
+	   write " "
+      	  }
+      	  
+      	  write "|",$piece($get(^globalArea(codArea)),"^",3),!
+      	}
+
+9999     	
+      	quit 1

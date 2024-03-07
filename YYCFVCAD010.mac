@@ -5,22 +5,22 @@ YYCFVCAD010
 
 CadastroDeFuncionario(codFunc, desFunc, codSetor, sitFunc)
 
-	if '$data(codFunc) || '$data(codSetor) || '$data(sitFunc){
+	if ('$data(codFunc)) ! ('$data(codSetor)) ! ('$data(sitFunc)){
 	 write "valores nulo",!
 	 quit 1
 	}
 	
-	if (codFunc?.N '= 1) || (codFunc > 99){
+	if (codFunc?.N '= 1) ! (codFunc > 99) ! (codFunc < 0){
 	 write "Valor do codigo invalido",!
 	 quit 1
 	}
 	
-	set setorValido = $piece( $get(^globalSetor(codSetor)),"^",1)
-	if (codSetor?.N '= 1) || (setorValido = ""){
+	set setorValido = $piece($get(^globalSetor(codSetor)),"^",1)
+	if (codSetor?.N '= 1) ! (setorValido = ""){
 	 write "Valor do setor invalido",!
 	 quit 1
 	}
-	if sitFunc?.N '= 1 || (sitFunc > 1){
+	if (sitFunc?.N '= 1) ! (sitFunc > 1){
 	 write "Valor da situacao invalida",!
 	 quit 1	
 	}
