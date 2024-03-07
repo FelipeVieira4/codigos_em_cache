@@ -51,23 +51,28 @@ CadastroDeFuncionario(codFunc, desFunc, codSetor, sitFunc)
 	
 TelaCadastroDeFunc
 
+0000
+	new cod,des,codSetor,sit
+	
+0500
+	set (cod,des,codSetor,sit) = ""
+	
 CONTINUAR
 	write #
 	write "====Cadastro de FUNCIONARIO====",!
 	
-	new cod,des,codSetor,sit
-	set (cod,des,codSetor,sit) = ""
-	
+1000ON
 	read "Codigo do Funcionario:",cod,!
 	read "Descricao do Funcionario:",des,!
 	read "Codigo do setor:",codSetor,! 
 	read "Situacao do Funcionario:",sit,! 
-	
+1000EX
+
 	if (cod="") ! (sit="") ! (codSetor=""){
 	 write !,"Valores nulos sao invalidos",!
 	 goto PASSARCADASTRO ;Pular o Cadastro da Area
 	}
-	
+3000	
 	; Chamar a regra de Cadastro do funcionario
 	do CadastroDeFuncionario^YYCFVCAD010(cod,des,codSetor,sit)
 
@@ -76,5 +81,5 @@ PASSARCADASTRO
 	set continuar = ""
 	read "Continuar?(S):",continuar
 	if $zconvert(continuar ,"U") = "S" goto CONTINUAR
-
+9999
 	quit 1

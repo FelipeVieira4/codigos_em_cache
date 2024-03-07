@@ -53,24 +53,29 @@ CadastroDeSetor(codSetor, desSetor, codArea, sitSetor)
 	
 TelaCadastroDoSetor
 
+0000
+	new cod,des,codArea,sit
+
+0500
+	set (cod,des,codArea,sit) = ""
+
 CONTINUAR
 
 	write #
 	write "====Cadastro de SETOR====",!
-	
-	new cod,des,codArea,sit
-	set (cod,des,codArea,sit) = ""
-	
+
+1000ON	
 	read "Codigo do Setor:",cod,!
 	read "Descricao do Setor:",des,!
 	read "Codigo da Area:",codArea,! 
 	read "Situacao do Setor:",sit,!
-	
+1000EX	
 	if (cod="") ! (sit="") ! (codArea=""){
 	 write !,"Valores nulos sao invalidos",!
 	 goto PASSARCADASTRO ;Pular o Cadastro da Area
 	}
-	
+
+3000
 	do CadastroDeSetor^YYCFVCAD020(cod,des,codArea,sit)
 
 PASSARCADASTRO
@@ -79,5 +84,6 @@ PASSARCADASTRO
 	set continuar = ""
 	read "Continuar?(S):",continuar
 	if $zconvert(continuar ,"U") = "S" goto CONTINUAR
-	
+
+9999
 	quit 1
