@@ -1,29 +1,31 @@
 YYCFVCAD030
 
-	    ;Codigo / Descrição / Situação 
- set ^globalArea(0) = "0^descricao^0"
+	    ;Codigo / Descrição / Situação
  do TelaCadastroDeArea^YYCFVCAD030
+
+
 
 CadastroDeArea(codArea, desArea, sitArea)
 
-	; Parte de validações
-	if '$data(codArea) || '$data(sitArea){
-	 write "Parametro nulo nao e aceito",!
+	; Parte de validações (não sei por que mais o valor "" é considerado como valido)
+	if ('$data(codArea)) ! ('$data(sitArea)){
+	 write "Parametro em branco são invalidos",!
 	 quit 1
 	}
 
-	if (codArea?.N '= 1) || (codArea > 99){ ;Código só pode conter  digitos então de 0 até 99
+	;Código só pode conter  digitos então de 0 até 99
+	if (codArea?.N '= 1) ! (codArea > 99) ! (codArea < 0){
 	 write "Valor do codigo invalido",!
 	 quit 1
 	}
-	if sitArea?.N '= 1 || (sitArea > 1){
+	if (sitArea?.N '= 1) ! (sitArea > 1){
 	 write "Valor da situacao invalida",!
 	 quit 1	
 	}
 	
-	; Caso parâmetro esteja em branco colocar um valor nula
-	if '$data(desArea){
-	 set desArea = ""	
+	
+	if ('$data(desArea)){
+	 set desArea = "" ; Caso parâmetro esteja em branco colocar um valor nula
 	}
 
 	
@@ -37,37 +39,47 @@ CadastroDeArea(codArea, desArea, sitArea)
 	 ; Caso retorno seja "S" remove as informações da empresa da ^globalArea
 	 set apagar = ""
 	 read "Apagar Area?(S/n):",apagar
+	 
 	 if $zconvert(apagar,"U") = "S"{
 	  kill ^globalArea(valorCodigo)
 	  write !,"Valor apagado",!	 
 	 }
+	 
 	 zwrite ^globalArea
 	 quit 1 ;Sair da rotina
 	}
 	
-	; Tendo esse código valído copiar os parametros para ^globaArea
+	; Tendo esse código valído e não usado copiar os parametros para ^globaArea
 	set ^globalArea(codArea) = codArea_"^"_desArea_"^"_sitArea
 	
 	;zwrite ^globalArea
 	write "Global criada",!
-	
 	quit 1
 	
 TelaCadastroDeArea
+	new cod,des,sit
 
 CONTINUAR
 	write #
 	write "====Cadastro de AREA====",!
-	new cod,des,sit
 	set (cod,des,sit) = ""
 	
 	read "Codigo da Area:",cod,!
 	read "Descricao da Area:",des,! 
 	read "Situacao da Area:",sit,! 
 	
-	do CadastroDeArea^YYCFVCAD030(cod,des,sit)
+	;Validar valores antes de fazer o cadastos
+	;Se não na regra CadastroDeArea vai considerar "nulos" como valídos
+	if (cod="") ! (sit=""){
+	 write !,"Valores nulos sao invalidos",!
+	 goto PASSARCADASTRO ;Pular o Cadastro da Area
+	}
 	
+	do CadastroDeArea(cod,des,sit)
+
+PASSARCADASTRO
 	write "========================",!
+	
 	set continuar = ""
 	read "Continuar?(S):",continuar
 	if $zconvert(continuar ,"U") = "S" goto CONTINUAR

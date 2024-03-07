@@ -1,7 +1,6 @@
 YYCFVCAD010
 
  ;global é composta por Codigo^Descrição^Setor^Situação
- set ^globalFuncionario(0) = "0^descricao^0^0"
  do TelaCadastroDeFunc^YYCFVCAD010
 
 CadastroDeFuncionario(codFunc, desFunc, codSetor, sitFunc)
@@ -64,23 +63,18 @@ CONTINUAR
 	read "Codigo do setor:",codSetor,! 
 	read "Situacao do Funcionario:",sit,! 
 	
+	if (cod="") ! (sit="") ! (codSetor=""){
+	 write !,"Valores nulos sao invalidos",!
+	 goto PASSARCADASTRO ;Pular o Cadastro da Area
+	}
+	
 	; Chamar a regra de Cadastro do funcionario
 	do CadastroDeFuncionario^YYCFVCAD010(cod,des,codSetor,sit)
-	
+
+PASSARCADASTRO	
 	write "========================",!
 	set continuar = ""
 	read "Continuar?(S):",continuar
 	if $zconvert(continuar ,"U") = "S" goto CONTINUAR
 
 	quit 1
-	
-
- ; Rotina para mostrar informaçãos do Setor e sua Area 
-MostrarSetorArea(codSetor)
-	set setor = $get(^globalSetor(codSetor))
-	write "Codigo Setor:"_$piece(setor,"^",1),!
-	write "Descricao Setor:"_$piece(setor,"^",2),!
-	write "Codigo Area:"_$piece(setor,"^",3),!
-	set codArea = $piece(setor,"^",3)
-	write " - Descricao Area:"_$piece($get(^globalArea($piece(setor,"^",3))),"^",2),!
-	write "Situacao setor(0 - inativa e 1 - ativa) :"_$piece(setor,"^",4)

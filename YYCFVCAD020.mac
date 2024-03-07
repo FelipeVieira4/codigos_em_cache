@@ -1,6 +1,5 @@
 YYCFVCAD020
  	    ;Codigo / Descrição / Area / Situação 
- set ^globalSetor(0) = "0^descricao^0^0"
  do TelaCadastroDoSetor^YYCFVCAD020
 	
 CadastroDeSetor(codSetor, desSetor, codArea, sitSetor)
@@ -55,6 +54,7 @@ CadastroDeSetor(codSetor, desSetor, codArea, sitSetor)
 TelaCadastroDoSetor
 
 CONTINUAR
+
 	write #
 	write "====Cadastro de SETOR====",!
 	
@@ -64,9 +64,16 @@ CONTINUAR
 	read "Codigo do Setor:",cod,!
 	read "Descricao do Setor:",des,!
 	read "Codigo da Area:",codArea,! 
-	read "Situacao da Area:",sit,! 
+	read "Situacao da Area:",sit,!
+	
+	if (cod="") ! (sit="") ! (codArea=""){
+	 write !,"Valores nulos sao invalidos",!
+	 goto PASSARCADASTRO ;Pular o Cadastro da Area
+	}
 	
 	do CadastroDeSetor^YYCFVCAD020(cod,des,codArea,sit)
+
+PASSARCADASTRO
 	
 	write "========================",!
 	set continuar = ""
