@@ -1,6 +1,7 @@
 YYCFVCAD020
  	    ;Codigo / Descrição / Area / Situação 
- do TelaCadastroDoSetor^YYCFVCAD020
+	set ^globalSetor("0") ="0^^0^1"
+	do TelaCadastroDoSetor^YYCFVCAD020
 	
 CadastroDeSetor(codSetor, desSetor, codArea, sitSetor)
 	
