@@ -1,0 +1,91 @@
+YYCFVCAD060
+ ;rotina jogo adivinação/forca
+ 
+ new palavraCerta, input, escolherGlobal, escolha, chances, letrasEcontradas, dica
+ 
+ ;Comidas
+ set ^globalPalavras("0") = "Arroz^Feijao^Pizza^Carne^Hamburger^Batata Frita^Macarrao"
+ ;Veiculos
+ set ^globalPalavras("1") = "Carro^Moto^Aviao^Caminhao^Bicicleta^Trem^Barco"
+ ;Pais
+ set ^globalPalavras("2") = "Brasil^Mexico^Alemanha^Russia^Georgia^Japao^Argentina"
+
+0500
+ set escolha = $random(3)
+ set escolherGlobal = $get(^globalPalavras(escolha))
+ set dica = escolha
+ set palavraCerta = $piece(escolherGlobal,"^",$random(7)+1)
+ 
+NIVEL
+ ; Input de escolha do usuario
+ write #
+ 
+ read "Escolha Nivel (1 - Facil, 2 - Medio, 3 - Dificil)",!,">",input,!
+ set chances = $select(input = 3: 3, input = 2: 4, 1: 5)
+ 
+ ; escrever na tela o nivel escolhido
+ write "# Nivel Escolhido:"_$select(input = 3: "Dificil",input = 2:"Medio",1:"Facil")_" #"
+ 
+ for index = 0: 1: 3{
+  write "."
+  hang 0.6	 
+ }
+ 
+ write #
+ 
+DISPLAY
+ ;escrever os caracteres da palavra certa
+ write #,!
+ 
+ write "DICA: E uma ",$select(dica = 0:"comida",dica = 1:"veiculo",dica = 2:" Pais"),!
+ for tentativas = chances:-1:0{
+ 
+  read "Digite uma Palavra:",input
+  write " chances:",tentativas,!
+  set input = $zconvert(input,"L")
+   
+  for conLetra = 1 : 1: $length(palavraCerta){
+	  
+   ;descobrir letras da plavra
+   set letra = $extract(palavraCerta,conLetra,conLetra)
+  
+   
+   if ($length(input,$zconvert(letra,"L")) > 1) && '$data(letrasEcontradas(conLetra)) {
+    set letrasEcontradas(conLetra) = "1" ; dizer que essa letra foi encontrada
+   }
+  
+   hang 0.5
+   
+   ;write letra," "
+   
+   
+
+   if $data(letrasEcontradas(conLetra)){
+    write letra," " 
+   }elseif letra = " "{
+    write "-"," "
+   }
+   else{ write "_"," "}
+   
+  }
+  if input = $zconvert(palavraCerta,"L") goto VENCEU
+  
+  hang 2
+ }
+ 
+ goto PERDEU
+ 
+ 
+VENCEU
+  write "Parabens voce acertou a palavra "_palavraCerta
+  goto CONTINUAR
+  
+PERDEU
+  write "Palavra certa era "_palavraCerta
+  
+CONTINUAR
+  kill letrasEcontradas
+  
+  hang 3
+  read !,"Jogar novamente (S):",input,!
+  if $zconvert(input,"L") = $zconvert("S","L") goto 0500
