@@ -1,7 +1,8 @@
 YYCFVCAD010
 
- ;global é composta por Codigo^Descrição^Setor^Situação
- do TelaCadastroDeFunc^YYCFVCAD010
+ 	;global é composta por Codigo^Descrição^Setor^Situação
+	set ^globalFuncionario("0") ="0^^0^1"
+	do TelaCadastroDeFunc^YYCFVCAD010
 
 CadastroDeFuncionario(codFunc, desFunc, codSetor, sitFunc)
 
