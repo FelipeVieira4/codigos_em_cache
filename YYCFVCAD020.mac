@@ -1,7 +1,7 @@
 YYCFVCAD020 ;
  	;    ;Codigo / Descrição / Area / Situação 
 	set ^globalSetor("0") ="0^^0^1"
-	do TelaCadastroDoSetor^YYCFVCAD020
+	do CadastroDeSetor^YYCFVCAD020
 	;
 CadastroDeSetor(codSetor, desSetor, codArea, sitSetor)
 	;
@@ -16,14 +16,14 @@ Valcp1200 ;
 	set areaValida = $piece( $get(^globalArea(codArea)),"^",1)
 	if (codArea?.N'=1)!(areaValida="") goto 8100
 Valcp1300 ;	
-	if (sitSetor?.N '= 1)!(sitSetor > 1) goto 8100
+	if (sitSetor?.N'=1)!(sitSetor>1) goto 8100
 Valcp1400 ;
 	; Caso parâmetro esteja em branco colocar um valor nula
-	if '$data(desSetor) set desSetor = ""
+	if $get(desSetor)="" set desSetor = ""
 Valcp1500 ;
 	; Caso tenha um Setor já regista nessa chave perguntar para remover a mesma
 	set valorCodigo = $piece($get(^globalSetor(codSetor)),"^",1)	
-	if valorCodigo = "" goto 3000
+	if $get(valorCodigo)="" goto 3000
 Excluir	;	
 	write "Esse codigo existe",!
 	;
@@ -38,8 +38,7 @@ Excluir	;
 3000	;
 	set ^globalSetor(codSetor) = codSetor_"^"_desSetor_"^"_codArea_"^"_sitSetor
 	;zwrite ^globalSetor
-	write "Global criada",!
-	goto 9999
+	write "Global adicicionada",!
 	;
 8000	zwrite ^globalSetor
 	goto 9999
