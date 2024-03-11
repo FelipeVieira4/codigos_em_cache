@@ -1,90 +1,48 @@
-YYCFVCAD020
- 	    ;Codigo / Descrição / Area / Situação 
+YYCFVCAD020 ;
+ 	;    ;Codigo / Descrição / Area / Situação 
 	set ^globalSetor("0") ="0^^0^1"
 	do TelaCadastroDoSetor^YYCFVCAD020
-	
+	;
 CadastroDeSetor(codSetor, desSetor, codArea, sitSetor)
-	
+	;
 	; Validações de parâmetros
-	if ('$data(codSetor)) ! ('$data(codArea)) ! ('$data(sitSetor)){
-	 write "valores nulo",!
-	 quit 1
-	}
-
-	if (codSetor?.N '= 1) ! (codSetor > 99) ! (codSetor < 0){
-	 write "Valor do codigo invalido",!
-	 quit 1
-	}
-	
+Valcp1000 ;
+	if ($get(codSetor)="")!($get(codArea)="")!($get(sitSetor)="") goto 8100
+Valcp1100 ;
+	if (codSetor?.N'=1)!(codSetor>99)!(codSetor<0) goto 8100
+	;
 	; Validar se o código da da ^globalArea é valida
+Valcp1200 ;
 	set areaValida = $piece( $get(^globalArea(codArea)),"^",1)
-	if (codArea?.N '= 1) ! (areaValida = ""){
-	 write "Valor da area invalido",!
-	 quit 1
-	}
-	if (sitSetor?.N '= 1) ! (sitSetor > 1){
-	 write "Valor da situacao invalida",!
-	 quit 1	
-	}
-	
+	if (codArea?.N'=1)!(areaValida="") goto 8100
+Valcp1300 ;	
+	if (sitSetor?.N '= 1)!(sitSetor > 1) goto 8100
+Valcp1400 ;
 	; Caso parâmetro esteja em branco colocar um valor nula
-	if '$data(desSetor){
-	 set desSetor = ""	
-	}
-	
+	if '$data(desSetor) set desSetor = ""
+Valcp1500 ;
 	; Caso tenha um Setor já regista nessa chave perguntar para remover a mesma
 	set valorCodigo = $piece($get(^globalSetor(codSetor)),"^",1)	
-	if valorCodigo '= "" {
-	 write "Esse codigo existe",!
-	 
-	 set apagar = 0
-	 read "Apagar Area?(S/n):",apagar
-	 if $zconvert(apagar,"U") = "S"{
-	  kill ^globalSetor(valorCodigo)
-	  write !,"Valor apagado",!	 
-	 }
-	 zwrite ^globalSetor
-	 quit 1
-	}
-	
+	if valorCodigo = "" goto 3000
+Excluir	;	
+	write "Esse codigo existe",!
+	;
+	set apagar = 0
+	read "Apagar Area?(S/n):",apagar
+	if $zconvert(apagar,"U")="S" do
+	.kill ^globalSetor(valorCodigo)
+	.write !,"Valor apagado",!
+	goto 8000	 
+	;
+	;
+3000	;
 	set ^globalSetor(codSetor) = codSetor_"^"_desSetor_"^"_codArea_"^"_sitSetor
 	;zwrite ^globalSetor
 	write "Global criada",!
-	quit 1
-	
-TelaCadastroDoSetor
-
-0000
-	new cod,des,codArea,sit
-
-0500
-	set (cod,des,codArea,sit) = ""
-
-CONTINUAR
-
-	write #
-	write "====Cadastro de SETOR====",!
-
-1000ON	
-	read "Codigo do Setor:",cod,!
-	read "Descricao do Setor:",des,!
-	read "Codigo da Area:",codArea,! 
-	read "Situacao do Setor:",sit,!
-1000EX	
-	if (cod="") ! (sit="") ! (codArea=""){
-	 write !,"Valores nulos sao invalidos",!
-	 goto PASSARCADASTRO ;Pular o Cadastro da Area
-	}
-
-3000
-	do CadastroDeSetor^YYCFVCAD020(cod,des,codArea,sit)
-
-PASSARCADASTRO
-	
-	write "========================",!
-	set continuar = ""
-	read "Continuar?(S):",continuar
-	if $zconvert(continuar ,"U") = "S" goto CONTINUAR
-
-9999
-	quit 1
+	goto 9999
+	;
+8000	zwrite ^globalSetor
+	goto 9999
+8100	write "ERRO",!
+9999	quit 1
+	;
