@@ -1,8 +1,8 @@
-YYCFVCAD030 ;
+YYCFVCAD030	;
 	;Codigo / Descrição / Situação
-	set ^globalArea("0") ="0^^1"
-	do TelaCadastroDeArea^YYCFVCAD030
-CadastroDeArea(codArea, desArea, sitArea)
+	set ^globalArea("0")="0^^1"
+	do CadastroDeArea^YYCFVCAD030
+CadastroDeArea(codArea, desArea, sitArea)	;
 	;
 Valcp1000	;
 	; Parte de validações (não sei por que mais o valor "" é considerado como valido)
@@ -18,12 +18,12 @@ Valcp1200	;
 Valcp1300	;
 	if ('$data(desArea)) set desArea = "" ; Caso parâmetro esteja em branco colocar um valor nula
 	;
-		; Caso tenha uma área já regista nessa chave perguntar para remover a mesma 
+	; Caso tenha uma área já regista nessa chave perguntar para remover a mesma 
 	set valorGlobal = $get(^globalArea(codArea))
 	set valorCodigo = $piece(valorGlobal,"^",1)
 	if $get(valorCodigo)="" goto 3000
-
-EXCLUIR	
+	;
+EXCLUIR	;
 	write "Esse codigo existe",!
 	set apagar = ""
 	read "Apagar Area?(S/n):",apagar
@@ -31,14 +31,13 @@ EXCLUIR
 	if $zconvert(apagar,"U") = "S" do
 	.kill ^globalArea(valorCodigo)
 	.write !,"Valor apagado",!
-	;
-	zwrite ^globalTabelas	 
-	goto 9999
+	;	 
+	goto 8000
 3000	;
 	; Tendo esse código valído e não usado copiar os parametros para ^globaArea
 	set ^globalArea(codArea) = codArea_"^"_desArea_"^"_sitArea
 	;
-	write "Global criada",!
+	write "Global adicicionada",!
 8000	zwrite ^globalArea
 	goto 9999
 8100	write "ERRO",!
