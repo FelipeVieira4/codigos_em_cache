@@ -1,231 +1,46 @@
-YYCFVCAD030
-
-	    ;Codigo / Descrição / Situação
- do TelaCadastroDeArea^YYCFVCAD030
-
-
-
+YYCFVCAD030 ;
+	;Codigo / Descrição / Situação
+	set ^globalArea("0") ="0^^1"
+	do TelaCadastroDeArea^YYCFVCAD030
 CadastroDeArea(codArea, desArea, sitArea)
-
+	;
+Valcp1000	;
 	; Parte de validações (não sei por que mais o valor "" é considerado como valido)
-	if ('$data(codArea)) ! ('$data(sitArea)){
-	 write "Parametro em branco sao invalidos",!
-	 quit 1
-	}
-
+	if ($get(codArea)="")!($get(sitArea)="") goto 8100
+	;
+Valcp1100	;
 	;Código só pode conter  digitos então de 0 até 99
-	if (codArea?.N '= 1) ! (codArea > 99) ! (codArea < 0){
-	 write "Valor do codigo invalido",!
-	 quit 1
-	}
-	if (sitArea?.N '= 1) ! (sitArea > 1){
-	 write "Valor da situacao invalida",!
-	 quit 1	
-	}
-	
-	
-	if ('$data(desArea)){
-	 set desArea = "" ; Caso parâmetro esteja em branco colocar um valor nula
-	}
-
-	
+	if (codArea?.N'=1)!(codArea>99)!(codArea<0) goto 8100
+	;
+Valcp1200	; 
+	if (sitArea?.N'=1)!(sitArea>1) goto 8100
+	;
+Valcp1300	;
+	if ('$data(desArea)) set desArea = "" ; Caso parâmetro esteja em branco colocar um valor nula
+	;
+		; Caso tenha uma área já regista nessa chave perguntar para remover a mesma 
 	set valorGlobal = $get(^globalArea(codArea))
 	set valorCodigo = $piece(valorGlobal,"^",1)
-	
-	; Caso tenha uma área já regista nessa chave perguntar para remover a mesma 
-	if valorCodigo '= "" {
-	 write "Esse codigo existe",!
-	 
-	 ; Caso retorno seja "S" remove as informações da empresa da ^globalArea
-	 set apagar = ""
-	 read "Apagar Area?(S/n):",apagar
-	 
-	 if $zconvert(apagar,"U") = "S"{
-	  kill ^globalArea(valorCodigo)
-	  write !,"Valor apagado",!	 
-	 }
-	 
-	 quit 1 ;Sair da rotina
-	}
-	
+	if $get(valorCodigo)="" goto 3000
+
+EXCLUIR	
+	write "Esse codigo existe",!
+	set apagar = ""
+	read "Apagar Area?(S/n):",apagar
+	;
+	if $zconvert(apagar,"U") = "S" do
+	.kill ^globalArea(valorCodigo)
+	.write !,"Valor apagado",!
+	;
+	zwrite ^globalTabelas	 
+	goto 9999
+3000	;
 	; Tendo esse código valído e não usado copiar os parametros para ^globaArea
 	set ^globalArea(codArea) = codArea_"^"_desArea_"^"_sitArea
-	
-	;zwrite ^globalArea
+	;
 	write "Global criada",!
-	quit 1
-	
-TelaCadastroDeArea
-	new cod,des,sit
-
-CONTINUAR
-	write #
-	write "====Cadastro de AREA====",!
-	set (cod,des,sit) = ""
-	
-	read "Codigo da Area:",cod,!
-	read "Descricao da Area:",des,! 
-	read "Situacao da Area:",sit,! 
-	
-	;Validar valores antes de fazer o cadastos
-	;Se não na regra CadastroDeArea vai considerar "nulos" como valídos
-	if (cod="") ! (sit=""){
-	 write !,"Valores nulos sao invalidos",!
-	 goto PASSARCADASTRO ;Pular o Cadastro da Area
-	}
-	
-	do CadastroDeArea(cod,des,sit)
-
-PASSARCADASTRO
-	write "========================",!
-	
-	set continuar = ""
-	read "Continuar?(S):",continuar
-	if $zconvert(continuar ,"U") = "S" goto CONTINUAR
-
-	quit 1
-
-MostrarAreas
-YYCFVCAD030
-
-	    ;Codigo / Descrição / Situação
- do TelaCadastroDeArea^YYCFVCAD030
-
-
-
-CadastroDeArea(codArea, desArea, sitArea)
-
-	; Parte de validações (não sei por que mais o valor "" é considerado como valido)
-	if ('$data(codArea)) ! ('$data(sitArea)){
-	 write "Parametro em branco sao invalidos",!
-	 quit 1
-	}
-
-	;Código só pode conter  digitos então de 0 até 99
-	if (codArea?.N '= 1) ! (codArea > 99) ! (codArea < 0){
-	 write "Valor do codigo invalido",!
-	 quit 1
-	}
-	if (sitArea?.N '= 1) ! (sitArea > 1){
-	 write "Valor da situacao invalida",!
-	 quit 1	
-	}
-	
-	
-	if ('$data(desArea)){
-	 set desArea = "" ; Caso parâmetro esteja em branco colocar um valor nula
-	}
-
-	
-	set valorGlobal = $get(^globalArea(codArea))
-	set valorCodigo = $piece(valorGlobal,"^",1)
-	
-	; Caso tenha uma área já regista nessa chave perguntar para remover a mesma 
-	if valorCodigo '= "" {
-	 write "Esse codigo existe",!
-	 
-	 ; Caso retorno seja "S" remove as informações da empresa da ^globalArea
-	 set apagar = ""
-	 read "Apagar Area?(S/n):",apagar
-	 
-	 if $zconvert(apagar,"U") = "S"{
-	  kill ^globalArea(valorCodigo)
-	  write !,"Valor apagado",!	 
-	 }
-	 
-	 quit 1 ;Sair da rotina
-	}
-	
-	; Tendo esse código valído e não usado copiar os parametros para ^globaArea
-	set ^globalArea(codArea) = codArea_"^"_desArea_"^"_sitArea
-	
-	;zwrite ^globalArea
-	write "Global criada",!
-	quit 1
-	
-TelaCadastroDeArea
-
-0000
-	new cod,des,sit
-	
-0500
-	set (cod,des,sit) = ""
-	
-CONTINUAR
-	write #
-	write "====Cadastro de AREA====",!
-
-1000ON	
-	read "Codigo da Area:",cod,!
-	read "Descricao da Area:",des,! 
-	read "Situacao da Area:",sit,! 
-1000EX	
-	;Validar valores antes de fazer o cadastos
-	;Se não na regra CadastroDeArea vai considerar "nulos" como valídos
-	if (cod="") ! (sit=""){
-	 write !,"Valores nulos sao invalidos",!
-	 goto PASSARCADASTRO ;Pular o Cadastro da Area
-	}
-
-3000
-	do CadastroDeArea(cod,des,sit)
-
-PASSARCADASTRO
-	write "========================",!
-	
-	set continuar = ""
-	read "Continuar?(S):",continuar
-	if $zconvert(continuar ,"U") = "S" goto CONTINUAR
-9999
-	quit 1
-
-
- ;===============================================================================
-MostrarAreas
-
-	new codArea
-	set codArea = "0"
-
-	; Tentativa tosca de fazer um GRID pelo prompt
-	write #,!
-	write "= COD|	","=== DESCRICAO(33)===	"," 	|SIT",!
-	
-	for {set codArea =$order(^globalArea(codArea)) QUIT:codArea=""
-	  set descricao = $piece($get(^globalArea(codArea)),"^",2)
-	  
-	  write "  ",codArea,"  |"
-	  
-	  write $extract(descricao,0,34)
-      	  for i = $length(descricao) : 1 : 33{
-	   write " "
-      	  }
-      	  
-      	  write "|",$piece($get(^globalArea(codArea)),"^",3),!
-      	}   	
-      	quit 1
-0000
-	new codArea
-
-0500
-	set codArea = "0"
-
-2000	
-	; Tentativa tosca de fazer um GRID pelo prompt
-	write #,!
-	write "= COD|	","=== DESCRICAO(33)===	"," 	|SIT",!
-	
-	for {set codArea =$order(^globalArea(codArea)) QUIT:codArea=""
-	  set descricao = $piece($get(^globalArea(codArea)),"^",2)
-	  
-	  write "  ",codArea,"  |"
-	  
-	  write $extract(descricao,0,34)
-      	  for i = $length(descricao) : 1 : 33{
-	   write " "
-      	  }
-      	  
-      	  write "|",$piece($get(^globalArea(codArea)),"^",3),!
-      	}
-
-9999     	
-      	quit 1
+8000	zwrite ^globalArea
+	goto 9999
+8100	write "ERRO",!
+9999	quit 1
+	;
