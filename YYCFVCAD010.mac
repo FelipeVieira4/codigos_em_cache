@@ -1,6 +1,7 @@
 YYCFVCAD010 ;
  	;global é composta por Codigo^Descrição^Setor^Situação
 	set ^globalFuncionario("0") ="0^^0^1"
+	do CadastroDeFuncionario^YYCFVCAD010()
 CadastroDeFuncionario(codFunc, desFunc, codSetor, sitFunc)
 	;
 Valcp1000	;
@@ -20,7 +21,7 @@ Valcp1300	;
 	;
 Valcp1400	;
 	set valorCodigo = $piece($get(^globalFuncionario(codFunc)),"^",1)	
-	if valorCodigo'="" goto REMOVER
+	if $get(valorCodigo)="" goto 3000
 	;
 REMOVER	;
 	write "Esse codigo existe",!
@@ -36,6 +37,7 @@ REMOVER	;
 	;
 3000	;
 	set ^globalFuncionario(codFunc) = codFunc_"^"_desFunc_"^"_codSetor_"^"_sitFunc
+	write "Global adicicionada",!
 	;
 8000	zwrite ^globalFuncionario
 	goto 9999
