@@ -1,52 +1,67 @@
-YYTBCAD025
- set mensagem = ("")
- 
- do EditarTexto("meu noMe é felipe",7,mensagem)
- 
- quit
- 
-EditarTexto(string,opcao,stringEdt)
-	if '$data(string) || '$data(opcao){
-	 write "ERRO: falta de parametro",!
-	 quit
-	}
-	
-	;Será que existe switch/match em Caché?? ou um HashMap de keys(int) para "funções"
-	if opcao = 1{
-	 set stringEdt = $zconvert(string,"U")
-	 write stringEdt,!
-	}
-	elseif opcao = 2{
-	 set stringEdt = $zconvert(string,"L")
-	 write stringEdt,!
-	}
-	elseif opcao = 3{
-	 for index = $length(string):-1:1{
-	  write $extract(string,index,index)
-	 }
-	 write !
-	}
-	elseif opcao = 4{
-	 set stringEdt = $zconvert(string,"W")
-	 write stringEdt,!
-	}
-	elseif opcao = 5{
-	 write $extract(string,0,15),!
-	}
-	elseif opcao = 6{
-	 write $length(string),!
-	}
-	elseif opcao = 7{
-	 ; $Length - 1 por que por padrão ja vem valor 1
-	 ; só conta vogais em minúsculo
-	 write "QTDA A:",$length(string,"a")-1,!
-	 write "QTDA E:",$length(string,"e")-1,!
-	 write "QTDA I:",$length(string,"i")-1,!
-	 write "QTDA O:",$length(string,"o")-1,!
-	 write "QTDA U:",$length(string,"u")-1,!
-	}
-	else{
-	 write "ERRO: opção invalída",!
-	}
-	 
-	quit
+YYCFV025	;
+	;
+EditarTexto(string,opcao,stringEdt)	;
+	if opcao=1 goto 1000
+ 	if opcao=2 goto 2000
+ 	if opcao=3 goto 3000
+ 	if opcao=4 goto 4000
+ 	if opcao=5 goto 5000
+ 	if opcao=6 goto 6000
+ 	if opcao=7 goto 7000
+ 	if opcao=8 goto 8000
+ 	goto 8100
+1000	;
+	set stringEdt = $zconvert(string,"U")
+	write stringEdt,!
+	goto 9999
+2000	;
+	set stringEdt = $zconvert(string,"L")
+	write stringEdt,!
+	goto 9999
+3000	;
+	for index = $length(string):-1:1 do
+	.write $extract(string,index,index)
+	write !
+	goto 9999
+4000	;
+	set stringEdt = $zconvert(string,"W")
+	write stringEdt,!
+	goto 9999
+5000	;
+	set stringEdt = $extract(string,0,15)
+	write stringEdt,!
+	goto 9999
+6000	;
+	set stringEdt = $length(string)
+	write stringEdt,!
+	goto 9999
+7000	;
+	write "QTDA A:",$length($zconvert(string,"U"),"A")-1,!
+	write "QTDA E:",$length($zconvert(string,"U"),"E")-1,!
+	write "QTDA I:",$length($zconvert(string,"U"),"I")-1,!
+	write "QTDA O:",$length($zconvert(string,"U"),"O")-1,!
+	write "QTDA U:",$length($zconvert(string,"U"),"U")-1,!
+8000	;
+	set maiorPalavra = ""
+	set antigaPalavra = ""
+	set contador = 0
+	;	
+	set antigaPosicao = 0
+	for i=1:1:$length(string) do
+	.if $extract(string,i,i) '= " " do
+	..set contador = contador+1
+	.else  do
+	..;write contador," - ",$length(antigaPalavra)," - ",$length(antigaPosicao),!
+	..if contador < $length(antigaPalavra)-1 do
+	...set maiorPalavra = $extract(string,antigaPosicao+1,i)  
+	...set contador = 0
+	...set antigaPalavra = maiorPalavra
+	..set antigaPosicao = i
+	;
+	if contador < $length(antigaPalavra)-1 do
+	.set maiorPalavra = $extract(string,antigaPosicao+1,i)
+	;
+	write "Maior palavra e:",maiorPalavra,!
+	goto 9999
+8100	write "Opcao invalida",!
+9999	quit 1
