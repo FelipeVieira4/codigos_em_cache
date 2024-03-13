@@ -67,7 +67,7 @@ Valcp1500()	;
 	if (dia?.N'=1)!(mes?.N'=1)!(ano?.N'=1) quit -1
 	if $piece(dataCons,"/",2)>12 quit -1
 	if $zdateh(dataCons,4,)>=$horolog quit -1
-	
+	;
 	quit 1
 	;
 	;
