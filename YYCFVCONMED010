@@ -1,0 +1,94 @@
+YYCFVCONMED010	;
+	new codPaci,nomPaci,datNasc,tele,planSaude
+0500	;
+	set (codPaci,nomPaci,datNasc,tele,planSaude) = ""
+	;
+	;
+	;
+1000	;
+1000ON	;Cadastro código do cliente
+	read "Codigo para o Paciente:",codPaci,!
+	if ($$Valcp1000(codPaci)'=1) goto 8000
+	;
+	if $$Valcp1100(codPaci)=1 do
+	.read "Esse paciente ja existe deseja alterado?(Y):",opc,!
+	.if $zconvert(opc,"U") '= "S" do 
+	..write #,"Digitar outro codigo",!
+	..goto 1000ON
+1000EX	;
+1100ON	; Nome do cliente
+	read "Nome para o Paciente:",nomPaci,!
+	if $$Valcp1200(nomPaci)'=1 goto 8100
+1100EX	;
+1200ON	;
+	read "Data nascimento do Paciente:",datNasc,!
+	if $$Valcp1500(datNasc)'=1 goto 8200
+1200EX	;
+1300ON	;
+	read "Telefone do Paciente:",tele,!
+	if $$Valcp1000(tele)'=1 goto 8300
+1300EX	;
+1400ON	;
+	read "Plano de saude do Paciente:",planSaude,!
+	if $$Valcp1300(planSaude)'=1 goto 8400
+1400EX	;
+	;
+	;
+	do 3000	;nao sei por que fiz assim kkk
+	goto 8500
+	;
+	;
+3000	set ^YYCFVCADPAC(codPaci)=codPaci_"^"_nomPaci_"^"_datNasc_"^"_tele_"^"_planSaude
+	quit
+	;
+	;
+	;
+Valcp1000(valor)	;validar se o código não é nulo ou está em branco
+	if ($get(valor)'="")&&($get(valor)?.N=1) quit 1
+	quit -1
+	;
+Valcp1100(valor)	;validar se o código ja está sendo usando
+	if $get(^YYCFVCADPAC(valor))'="" quit 1
+	quit -1
+	;
+Valcp1200(valor)	;validar se o nome não é nulo
+	if $get(valor)'="" quit 1
+	quit -1
+	;
+Valcp1300(valor)	;validar se o código do Plano é valido
+	if $get(^YYCFVCADPLA(valor))'="" quit 1
+	quit -1
+	;
+Valcp1500()	;
+	if $get(dataCons)="" quit -1
+	set dia = $piece($get(dataCons),"/",1)
+	set mes = $piece($get(dataCons),"/",2)
+	set ano = $piece($get(dataCons),"/",3)
+	if (dia?.N'=1)!(mes?.N'=1)!(ano?.N'=1) quit -1
+	if $piece(dataCons,"/",2)>12 quit -1
+	if $zdateh(dataCons,4,)>=$horolog quit -1
+	
+	quit 1
+	;
+	;
+	;
+8000	write #,"Codigo invalido",!
+	goto 1000ON
+	;
+8100	write #,"Nome invalido",!
+	goto 1100ON
+	;
+8200	write #,"Data invalido",!
+	goto 1200ON
+	;
+8300	write #,"Telefone invalido",!
+	goto 1300ON
+	;
+8400	write #,"Plano de saude invalido",!
+	goto 1400ON
+	;
+8500	write "Paciente Cadastrado",!
+	;
+	;
+9999	;
+	quit 1
