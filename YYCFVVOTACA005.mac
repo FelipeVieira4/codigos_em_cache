@@ -1,0 +1,60 @@
+YYCFVVOTACA005	;
+0000	;
+	new cod,nome,idade,partido,forCod
+0500	;
+	set (cod,nome,idade,partido,forCod)="0"
+	set cod = 0
+	;
+	;
+	for  set forCod = $order(^YYCFVCANDI(forCod)) quit:forCod=""  do
+	. set cod=forCod+1
+	;
+1000	;
+1000ON	;
+	read "Nome do candidato:",nome,!
+	if ($$Valcp1200(nome)'=1) goto 8000
+1000EX	;
+1100ON	;
+	read "Idade do candidato:",idade,!
+	if ($$Valcp1000'=1)!($$Valcp1100'=1) goto 8100
+1100EX	;
+1200ON	;
+	read "Partido do candidato:",partido,!
+	if ($$Valcp1200(partido)'=1) goto 8200
+1200EX	;
+	;
+	;
+	;
+3000	set ^YYCFVCANDI(cod) = cod_"^"_nome_"^"_idade_"^"_partido_"^"_"0" ;esse zero é quantidade de votos
+	goto 8900
+	;
+	;
+	;
+Valcp1000()	;
+	if ($get(idade)'="")&&($get(idade)?.N=1) quit 1
+	quit -1
+	;
+Valcp1100()	;
+	if ($get(idade)>0) quit 1
+	quit -1
+	;
+Valcp1200(valor)	;
+	if ($get(valor)'="") quit 1
+	quit -1
+	;
+	;
+	;
+8000	write #,"NOME INVALIDO",!
+	goto 1000ON
+	;
+8100	write #,"IDADE INVALIDO",!
+	goto 1100ON
+	;
+8200	write #,"Partido INVALIDO",!
+	goto 1200ON
+	;
+8900	write "FIM"
+	;
+	;
+	;
+9999	quit 1
