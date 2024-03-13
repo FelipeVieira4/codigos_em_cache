@@ -1,0 +1,59 @@
+YYCFVCONMED005	;
+0000	;
+	new codPlano,desPlano,valPlano,sc,opc
+	;
+0500	;
+	set (codPlano,desPlano,valPlano,sc,opc) = ""
+	;
+	;
+1000	;
+1000ON	;
+	read "Codigo do plano:",codPlano,!
+	if ($$Valcp1000'=1) goto 8000
+	if $get(^YYCFVCADPLA(codPlano))'="" do
+	.read "Esse plano ja existe deseja alterado?(Y):",opc,!
+	.if $zconvert(opc,"U") '= "S" do 
+	..write #,"Digitar outro codigo",!
+	..goto 1000ON
+1000EX	;
+	;
+1100ON	;
+	read "Descricao do plano:",desPlano,!
+	if ($get(desPlano)="") set desPlano = "nao informado"
+1100EX	;
+	;
+1200ON	;
+	read "Valor do plano:",valPlano,!
+	if ($$Valcp1100'=1) goto 8100
+1200EX	;
+	;Finalizado cadastro
+	do 3000
+	goto 8200
+	;
+	;
+Valcp1000()	;
+	if ($get(codPlano)'="")&&($get(codPlano)?.N=1) quit 1
+	quit -1
+	;
+Valcp1100()	;
+	if ($get(valPlano)'="")&&($get(valPlano)?.N=1) quit 1
+	quit -1
+	;
+	;
+3000	;
+	set ^YYCFVCADPLA(codPlano)=codPlano_"^"_desPlano_"^"_valPlano
+	quit
+	;
+	;
+8000	write #,"Codigo invalido",!
+	goto 1000ON
+	;
+8100	write #,"Valor invalidos",#
+	goto 1200ON
+	;
+8200	write "Cadastro do Plano feito",!
+	zw ^YYCFVCADPLA
+	;
+	;
+9999	quit 10
+	;
