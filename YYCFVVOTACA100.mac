@@ -1,0 +1,28 @@
+YYCFVVOTACA100	;
+0000	;
+	new cod,forCod,cadEscolhido
+0500	;
+	set (forCod,cadEscolhido)=""
+	set cod=0
+	;
+	;
+	for  set forCod = $order(^YYCFVCANDI(forCod)) quit:forCod=""  do
+	. set cod=forCod+1
+	. set $piece(^YYCFVCANDI(forCod),"^",5) = 0
+	;
+	;
+2000	;
+	for i = 0:1:100000 do
+	. set cadEscolhido = $random(cod)
+	. set votosCand =  $piece(^YYCFVCANDI(cadEscolhido),"^",5)
+	. set $piece(^YYCFVCANDI(cadEscolhido),"^",5) = votosCand+1
+	;
+4000	;
+	set forCod = ""
+	for  set forCod = $order(^YYCFVCANDI(forCod)) quit:forCod=""  do
+	. set cadEscolhido=^YYCFVCANDI(forCod)
+	. write "Nome:"_$piece(cadEscolhido,"^",2)_" Partido:"_$piece(cadEscolhido,"^",4)
+	. write " Votos:"_$piece(cadEscolhido,"^",5)_" Porcentagem:"_($piece(cadEscolhido,"^",5)*100/100000)_" %",!
+	;
+	;
+9999	quit
