@@ -1,0 +1,112 @@
+YYCFVCONMED020	;
+0000	; escolha da data, hora e hora final consulta, médico e paciente.
+	new codCons,dataCons,horaCons,codMed,CodPac,codBuscarCons,contCod,horaHor,horaAtualZ
+0500	;
+	set (codCons,dataCons,horaCons,codMed,CodPac,codBuscarCons,horaHor,horaAtualZ) = ""
+	set contCod = "0"
+	;
+	;
+	for  set codBuscarCons = $order(^YYCFVAGECON(codBuscarCons)) quit:codBuscarCons=""  do
+	. set contCod=codBuscarCons+1
+	;
+	;
+	;
+1000ON	;código paciente
+	read "Codigo do paciente:",CodPac,!
+	if ($$Valcp1000(CodPac)'=1)!($$Valcp1200(CodPac)'=1) goto 8000
+	;
+1000EX	;
+1100ON	;código Médico
+	read "Codigo do Medico:",codMed,!
+	if ($$Valcp1000(codMed)'=1!($$Valcp1100(codMed)'=1)) goto 8100
+	;
+1100EX	;
+	;
+1200ON	;
+	read "Data da Consulta",dataCons,!
+	if $$Valcp1500()'=1 goto 8200
+	;
+1200EX	;
+	;
+1300ON	;
+	read "Hora da Consulta:",horaCons,!
+	if $$Valcp1300'=1 goto 8300
+	if $$Valcp1400()'=1 goto 8400
+	;
+1300EX	;
+	;
+	do 3000
+	goto 9999
+	;
+	;
+	;
+3000	set ^YYCFVAGECON(contCod) = contCod_"^"_dataCons_"^"_horaCons_"^"_codMed_"^"_CodPac
+	quit
+	;
+	;
+	;
+Valcp1000(valor)	;validar se o código não é nulo ou está em branco
+	if ($get(valor)'="")&&($get(valor)?.N=1) quit 1
+	quit -1
+	;
+Valcp1100(codMec)	;validar o códiggo do medico
+	if $get(^YYCFVCADMED(codMec))'="" quit 1
+	quit -1
+	;
+Valcp1200(codPac)	;validar código do cliente
+	if $get(^YYCFVCADPAC(codPac))'="" quit 1
+	quit -1
+	;
+Valcp1300()	;validar código do cliente
+	set status = 1
+	set codBuscarCons = ""
+	; Nunca sofri tanto para fazer um validação tão simples
+	for  set codBuscarCons = $order(^YYCFVAGECON(codBuscarCons)) quit:codBuscarCons=""  do
+	. if dataCons = $piece($get(^YYCFVAGECON(codBuscarCons)),"^",2) do
+	. . set horaHor =  $ZTIMEH($piece($get(^YYCFVAGECON(codBuscarCons)),"^",3))
+	. . set horaAtualZ  =  $ZTIMEH(horaCons)
+	. . if (((horaAtualZ>horaHor)!(horaAtualZ+1800>horaHor))&&(horaHor+1800>horaAtualZ))!(horaAtualZ=horaHor) do
+	. . . set status = -1
+	. . . quit
+	quit status
+	;
+Valcp1400()
+	set horaMedIni = $piece(^YYCFVCADMED(codMed),"^",4)
+	set horaMedFin = $piece(^YYCFVCADMED(codMed),"^",5)
+	;
+	set horaMedIni = $ZTIMEH(horaMedIni)
+	set horaMedFin = $ZTIMEH(horaMedFin)
+	;
+	if (horaAtualZ>horaMedIni)&&(horaAtualZ<horaMedFin) quit 1
+	quit -1
+	;
+Valcp1500()	;
+	if $get(dataCons)="" quit -1
+	set dia = $piece($get(dataCons),"/",1)
+	set mes = $piece($get(dataCons),"/",2)
+	set ano = $piece($get(dataCons),"/",3)
+	if (dia?.N'=1)!(mes?.N'=1)!(ano?.N'=1) quit -1
+	if $piece(dataCons,"/",2)>12 quit -1
+	if $zdateh(dataCons,4,)<$horolog quit -1
+	
+	quit 1
+	;
+	;
+	;
+8000	write "Codigo paciente invalido",!
+	goto 1000ON
+	;
+8100	write "Codigo medico invalido",!
+	goto 1100ON
+8200	write "Data invalida",!
+	goto 1200ON
+8300	write "Horario ja registrado",!
+	goto 1300ON
+8400	write "Horario nao bate com a do medico",!
+	goto 1300ON
+	;
+SAIU	write "saiu como positivo",!
+	;
+9999	write !,"Cadasto de consulta realizado",!
+	quit 1
+	;
