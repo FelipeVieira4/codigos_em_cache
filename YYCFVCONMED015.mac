@@ -1,0 +1,90 @@
+YYCFVCONMED015	;
+0000	;
+	;código, nome, especialidade, horário de atendimento (horário inicio e horário fim).
+	new codMed,nomeMed,espeMed,horaIni,horaFin,horain,horafi
+0500	;
+	set (codMed,nomeMed,espe,horaIni,horaFin,horain,horafi) = ""
+	;
+	;
+	;
+1000	;
+1000ON	;código Médico
+	read "Codigo para o Medico:",codMed,!
+	if ($$Valcp1000(codMed)'=1) goto 8000
+	;
+	if $$Valcp1100(codMed)=1 do
+	. read "Esse paciente ja existe deseja alterado?(Y):",opc,!
+	. if $zconvert(opc,"U") '= "S" do 
+	. . write #,"Digitar outro codigo",!
+	. . goto 1000ON
+1000EX	;
+1100ON	;
+	read "Nome do Medico:",nomeMed,!
+	if $$Valcp1200(nomeMed)'=1 goto 8100
+1100EX	;
+1200ON	;
+	read "Especialidade do Medico:",espeMed,!
+	if $$Valcp1200(espeMed)'=1 goto 8200
+1200EX	;
+	;
+	write "Horario ex: 16:30",!
+1300ON	;
+	read "Horario inicio do Medico:",horaIni,!
+	if ($$Valcp1200(horaIni)'=1)!($$Valcp1300(horaIni)'=1) goto 8300
+1300EX	;
+1400ON	;
+	read "Horario final do Medico:",horaFin,!
+	if ($$Valcp1200(horaFin)'=1)!($$Valcp1300(horaFin)'=1) goto 8400
+	if $$Valcp1400(horaFin,horaIni)'=1 goto 8400
+	;
+1400EX	;
+	;
+	;
+	set ^YYCFVCADMED(codMed) = codMed_"^"_nomeMed_"^"_espeMed_"^"_horaIni_"^"_horaFin
+	goto 9999
+	;
+	;
+	;
+Valcp1000(valor)	;validar se o código não é nulo ou está em branco
+	if ($get(valor)'="")&&($get(valor)?.N=1) quit 1
+	quit -1
+	;
+Valcp1100(valor)	;validar se o código ja está sendo usando
+	if $get(^YYCFVCADMED(valor))'="" quit 1
+	quit -1
+	;
+Valcp1200(valor)	;validar se o valor é nulo
+	if $get(valor)'="" quit 1
+	quit -1
+	;
+Valcp1300(hora)	;validar se hora é valída
+	if $piece($get(hora),":",1)?.N'=1 quit -1
+	if $piece($get(hora),":",2)?.N'=1 quit -1
+	if ($piece($get(hora),":",1)>24)!($piece($get(hora),":",2)>60) quit -1
+	quit 1
+	;
+Valcp1400(horaFin,horaIni)	;
+	set horain = $ZTIMEH(horaIni)
+	set horafi = $ZTIMEH(horaFin)
+	if horain>horafi quit -1
+	quit 1
+	;
+	;
+	;
+8000	write "Codigo do medico e invalido",!
+	goto 1000ON
+8100	write #,"Nome do medico e invalido",!
+	goto 1100ON
+8200	write #,"Especialidade do medico e invalido",!
+	goto 1200ON
+8300	write #,"Horario inicio invalido",!
+	goto 1300ON
+8400	write "Horario final invalido",!
+	goto 1400ON
+	;
+8900	write "Cadastro medico feito com sucessso",!
+	;
+	;
+	;
+9999	write "Cadastro feito com sucesso",!
+	quit 1
