@@ -1,0 +1,273 @@
+YYCFVRESHOT010	;
+	;
+0000	;
+	; ^YYCFVCADQUA (global cadastro dos quartos)
+	; ^YYCFVCADQUA(codQuarto) = codQuarto_"^"_tipoQuarto_"^"_numPessoa_"^"_presoQuarto
+	new codQuarto, tipoQuarto, numPessoa, presoQuarto, dispQuarto ; variáveis dos quartos
+	;
+	; ^YYCFVCADHOS (global cadastro dos hospedes)
+	; ^YYCFVCADHOS(codHospede) = codHospede_"^"_emailHospede_"^"_telHospede
+	new codHospede, nomeHospede, emailHospede, telHospede ; variáveis dos hóspedes
+	;
+	; ^YYCFVRESQUA (global cadastro de reservas)
+	; ^YYCFVRESQUA(codReserva+1) = codReserva+1_"^"_codQuarto_"^"_codHospede_"^"_dataChegada_"^"_dataSaida
+	new codReserva, dataChegada, dataSaida ; variaveis da reserva
+	;
+	new opcaoMenu
+	new dia,mes,ano
+	; variaveis utilizadas para os FORs
+	new contarReserva, contarQuarto, dataDeEntrada, dataDeSaida, zdataChegada, zdataSaida
+	new codReservas, status
+	;
+	;
+0500	;
+	set (codQuarto, tipoQuarto, numPessoa, presoQuarto, dispQuarto) = ""
+	set (codHospede, nomeHospede, emailHospede, telHospede, dataChegada, dataSaida) = "" 
+	set (codReservas, dataChegada, dataSaida) = ""	
+	set opcaoMenu = ""
+	set contarReserva = ""
+	set ^globalQuartosIndisponiveis = "" ;global
+1000	;
+	;
+	;
+	;================================
+	;	MENU DA APLICAÇÃO
+	;================================
+	;
+MENU	;
+	write #,"1- Cadastrar quarto",!,"2- Cadastrar hospede",!,"3- Reservar quarto",!
+	write "4- Cancelar reserva",!,"5- Verificar quartos disponiveis",!,"6- SAIR",!
+	;
+	read ">",opcaoMenu,!
+	if opcaoMenu=1 goto 4100
+	if opcaoMenu=2 goto 4200
+	if opcaoMenu=3 goto 4300
+	if opcaoMenu=4 goto 4400
+	if opcaoMenu=5 goto 4500
+	if opcaoMenu=6 goto 9999
+	goto MENU
+	;
+	;s
+	;====================================
+	;	REGRAS DE SALVAR GLOBAIS
+	;====================================
+	;
+	;
+3100()	; SALVAR QUARTO
+	set ^YYCFVCADQUA(codQuarto) = codQuarto_"^"_tipoQuarto_"^"_numPessoa_"^"_presoQuarto ;_"^"_"disponivel"
+	write "Cadastro de quarto feito",!
+	hang 2
+	quit
+3200()	; SALVAR DE HOSPEDE
+	set ^YYCFVCADHOS(codHospede) = codHospede_"^"_emailHospede_"^"_telHospede
+	write "Cadastro de hospede feito",!
+	quit
+3300()	;SALVAR RESERVAR
+	set ^YYCFVRESQUA(codReserva+1) = codReserva+1_"^"_codQuarto_"^"_codHospede_"^"_dataChegada_"^"_dataSaida
+	;set $piece(^YYCFVCADQUA(codQuarto),"^",5) = "indisponivel"
+	write "Cadastro de RESERVA feito",!
+	quit
+	;
+	;
+	;================================
+	;	REGRAS DE CADASTRO
+	;================================
+	;
+	;================================
+4100	;Cadastro de quarto
+	;================================
+	;
+4101	read "Codigo quarto:",codQuarto,!
+	if ($$Valcp1000(codQuarto)'=1)!($$Valcp1100(codQuarto)'=1)!($$Valcp1110(codQuarto)=1)!($$Valcp1200(codQuarto)'=1) do
+	. do 8000
+	. goto 4101
+	;
+4102	read "Tipo do quarto:",tipoQuarto,!
+	if ($$Valcp1000(tipoQuarto)'=1) goto 4102
+	;
+4103	read "Numeros de pessoas:",numPessoa,!
+	write numPessoa,!
+	if ($$Valcp1000(numPessoa)'=1)!($$Valcp1100(numPessoa)'=1)!($$Valcp1110(numPessoa)=1) goto 4103
+	;
+4104	read "Preco do quarto:",presoQuarto,!
+	if ($$Valcp1000(presoQuarto)'=1)!($$Valcp1100(presoQuarto)'=1)!($$Valcp1110(numPessoa)=1) goto 4104
+	;
+	do 3100
+	goto MENU ;voltar ao menu
+	;
+	;
+	;
+	;================================
+4200	;Cadastro de Hospede
+	;================================
+	;
+4201	read "Codigo hospede:",codHospede,!
+	if ($$Valcp1000(codHospede)'=1)!($$Valcp1100(codHospede)'=1)!($$Valcp1110(codHospede)=1)!($$Valcp1300(codHospede)'=1) do
+	. do 8000
+	. goto 4201
+	;
+4202	read "Email do hospede:",emailHospede,!
+	if ($$Valcp1000(emailHospede)'=1)!($$Valcp1100(emailHospede)=1)!($length(emailHospede,"@")'=2) goto 4202
+	;
+4203	read "Telefone do hospede:",telHospede,!
+	if ($$Valcp1000(telHospede)'=1)!($$Valcp1100(telHospede)'=1)!($$Valcp1110(telHospede)=1)!($length(telHospede)'=9) goto 4203
+	;
+	do 3200
+	goto MENU
+	;
+	;
+	;
+	;============================
+4300	;Cadastro de Reservar quarto
+	;============================
+	;
+4301	;CODIGO DA RESERVA (AUTO INCREMENT)
+	set codReserva = $order(^YYCFVRESQUA(""),-1)
+	;
+4303	read "Codigo hospede:",codHospede,!
+	if ($$Valcp1000(codHospede)'=1)!($$Valcp1100(codHospede)'=1)!($$Valcp1300(codHospede)=1) goto 4303
+	;
+4304	read "Data chegada:",dataChegada,!
+	if $$Valcp1400(dataChegada)'=1 goto 4304
+	;
+4305	read "Data saida:",dataSaida,!
+	if $$Valcp1400(dataSaida)'=1 goto 4305
+	;
+4306	;codQuarto, codHospede, dataChegada, dataSaida
+	read "Codigo do quarto:",codQuarto,!
+	if ($$Valcp1000(codQuarto)'=1)!($$Valcp1100(codQuarto)'=1)!($$Valcp1200(codQuarto)=1) do
+	. do 8000
+	. goto 4306
+	if $$Valcp1500(dataChegada,dataSaida,codQuarto)=1 do  goto 4308
+	hang 10
+	do 8001
+4307	;
+	read "Alterar data(d/data) ou tentar outro codigo(c/codigo):",opcao,!
+	if ($zconvert(opcao,"U")="D")!($zconvert(opcao,"U")="DATA") goto 4304
+	if ($zconvert(opcao,"U")="C")!($zconvert(opcao,"U")="CODIGO") goto 4306
+	goto 4307
+	;
+4308	;
+	do 3300
+	goto MENU
+	;
+4400	;Cancelar reserva
+	read "Codigo da reserva:",codReserva,!
+	kill ^YYCFVRESQUA(codReserva)
+	goto MENU
+	;
+4500	;Verificar quartos disponíveis
+	;Percorer a global de reservas afim de achar quartos reservados para data de hoje e jogar o
+	;códigos desses quartos para uma global de execução
+	set contarReserva = "0"
+	for  set contarReserva=$order(^YYCFVRESQUA(contarReserva)) quit:contarReserva=""  do
+	. if $$Valcp1700($piece(^YYCFVRESQUA(contarReserva),"^",4),$piece(^YYCFVRESQUA(contarReserva),"^",5)) = 1 do
+	. . set ^globalQuartosIndisponiveis($piece(^YYCFVRESQUA(contarReserva),"^",2)) = "indisponivel"
+	;
+	;Percorer a global de quartos e valídar se o quarto de está disponivel hoje
+	set contarQuarto = "0"
+	for  set contarQuarto = $order(^YYCFVCADQUA(contarQuarto)) quit:contarQuarto=""  do
+	. write "Quarto:"_contarQuarto_"  Status:"
+	. if $get(^globalQuartosIndisponiveis(contarQuarto))="" write "disponivel"
+	. else  do  write "indisponivel"
+	. write !
+	;zw ^globalQuartosIndisponiveis
+	;
+	read "Continuar",opcao
+	goto MENU
+	;
+	;
+	;================================
+	;	REGRAS DE VAlIDAÇÕES
+	;================================
+	;
+Valcp1000(valor)	;VALIDAR SE O VALOR NÃO É NULO
+	if $get(valor)'="" quit 1
+	quit 0
+	;
+Valcp1100(valor)	;VALIDAR SE É NÚMERO
+	if $$Valcp1000(valor)'=1 quit 0
+	if $get(valor)?.N=1 quit 1
+	quit 0
+Valcp1110(valor)	;VALIDAR SE NUMERO É MENOR QUE ZERO
+	if $get(valor)<=0 quit 1
+	quit 0
+	;
+Valcp1200(valor)	;VALIDAR SE CÓDIGO DO QUARTO ESTÁ LIVRE
+	if $get(^YYCFVCADQUA(valor))="" quit 1
+	quit 0
+	;
+Valcp1300(valor)	;VALIDAR SE CÓDIGO DO HOSPEDE ESTÁ LIVRE
+	if $get(^YYCFVCADHOS(valor))="" quit 1
+	quit 0
+	;
+Valcp1400(data)	;VALIDAR DATAS
+	if $get(data)="" quit -1	;data nula
+	set dia = $piece($get(data),"/",1)
+	set mes = $piece($get(data),"/",2)
+	set ano = $piece($get(data),"/",3)
+	if ((dia?.N'=1)!($get(dia)=""))!((mes?.N'=1)!($get(mes)=""))!((ano?.N'=1)!($get(ano)="")) quit -1
+	if ($piece(data,"/",2)>12)!($piece(data,"/",2)<=0) quit -1
+	if $$Valcp1800(data)'=1 quit -1
+	if $zdateh(data,4,)<$horolog quit -1
+	;	
+	quit 1
+	;
+Valcp1500(dataInicial,DataFinal,codParaQuarto)	;VALIDAR SE O QUARTO ESTÁ LIVRE
+	set status = 1
+	set contarReserva = "0"
+	for  set contarReserva=$order(^YYCFVRESQUA(contarReserva)) quit:(contarReserva="")!(status=-1)  do
+	. set codDoQuarto = $piece($get(^YYCFVRESQUA(contarReserva)),"^",2)
+	. if codParaQuarto=codDoQuarto do
+	. . set dataDeEntrada = $piece($get(^YYCFVRESQUA(contarReserva)),"^",4)
+	. . set dataDeSaida = $piece($get(^YYCFVRESQUA(contarReserva)),"^",5)
+	. . ;
+	. . set dataDeEntrada = $zdateh(dataDeEntrada,4,)
+	. . set dataDeSaida = $zdateh(dataDeSaida,4,)
+	. . ;
+	. . set zdataChegada = $zdateh($get(dataChegada),4,)
+	. . set zdataSaida = $zdateh($get(dataSaida),4,)
+	. . ;
+	. . ; se as datas batem
+	. . if ((zdataChegada>dataDeEntrada)&&(zdataChegada<dataDeSaida))!((zdataSaida>dataDeEntrada)&&(zdataSaida<dataDeSaida)) do
+	. . . set status = -1
+	quit status
+	;
+Valcp1600(valor)	;VALIDAR SE A RESERVA EXISTE
+	if $get(^YYCFVRESQUA(valor))="" quit 1
+	quit 0
+	;
+Valcp1700(dataQuartoIni,dataQuartoFin)	;VALIDAR SE O QUARTO ESTÁ LIVRE
+	;
+	set dataQuartoIni = $zdateh(dataQuartoIni,4,)
+	set dataQuartoFin = $zdateh(dataQuartoFin,4,)
+	;
+	; se o quarto está reservado para hoje
+	if ($horolog>=dataQuartoIni)&&($horolog<=dataQuartoFin) quit 1
+	quit -1
+	;
+Valcp1800(data)	;Validar se quantidade de dias correponde ao mês
+	;
+	set ano = $piece(data,"/",3)
+	set mes = $piece(data,"/",2)
+	set dia = $piece(data,"/",1)
+	;
+	set qtdaDias = $piece($zdate($SYSTEM.SQL.LASTDAY(ano_"-"_mes_"-"_"1"),4),"/",1)
+	if (dia<=0)!(dia>qtdaDias) quit -1
+	quit 1
+	;
+	;
+	;
+8000	write #	;log para codigo invalido
+	write "Codigo Invalido",!
+	write "Possiveis causas: Codigo ja em uso, Codigo nulo, Codigo nao e um numero",!
+	hang 5
+	quit
+8001	write #,"Quarto indisponivel",!
+	hang 5
+	quit
+	;
+	;	
+	;
+9999	kill ^globalQuartosIndisponiveis
+	quit
